@@ -17,4 +17,11 @@ model Admin {
   password String
 }
 
+model Vehicles {
+  id Int @id @unique @default(autoincrement())
+  owner String
+  model String
+  pricePerKm Int
+  status String   // This feild will take only three values: approved, rejected, pending
+}
 

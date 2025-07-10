@@ -61,7 +61,9 @@ export default function LoginForm() {
                 <span>
                     Username
                 </span>
-                <input id="username" ref={usernameRef} name="username" type="text" placeholder="Enter username" className="input w-full" />
+                <input id="username" ref={usernameRef} name="username" 
+                type="text" placeholder="Enter username" 
+                className="input w-full" />
             </label>
 
             <label htmlFor="password" className="flex flex-col gap-1 mb-2">
