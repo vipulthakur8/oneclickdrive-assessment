@@ -11,7 +11,12 @@ export const authOptions: NextAuthOptions = {
   },
   providers: [
     CredentialsProvider({
-        async authorize(credentials) {
+        name: "Credentials",
+        credentials: {
+          username: { label: "Username", type: "text" },
+          password: { label: "Password", type: "password" }
+        },
+        authorize: async(credentials) => {
             // console.log("credentials", credentials);
             if (!credentials) {
               throw new Error("Credentials is not provided");
@@ -34,7 +39,7 @@ export const authOptions: NextAuthOptions = {
               throw new Error("Username and password do not match")
             }
             
-            return {id: admin?.id}
+            return {id: admin.id.toString(), name: admin.username}
 
         }
         

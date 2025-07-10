@@ -1,6 +1,7 @@
 import { PrismaClient } from "@/generated/prisma";
 import type { NextApiRequest, NextApiResponse } from "next";
-
+import { getServerSession } from "next-auth";
+import { authOptions } from "./auth/[...nextauth]";
 const prisma = new PrismaClient()
 
 type Data = {
@@ -11,6 +12,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>,
 ) {
+
+    const session = await getServerSession(req, res, authOptions);
+    console.log("session in editVehicle", session)
+    if (!session || !session.user) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
 
     if (req.method === 'POST') {
         try {
@@ -28,6 +35,11 @@ export default async function handler(
             })
 
             // update audit log
+            await prisma.auditTrail.create({
+                data: {
+                    operation: `${session.user.name} ${data.status} the vehicle with id ${data.id}`
+                }
+            })
 
             res.status(200).json({ message: `Vehicle ${data.status}`});
         } catch (error) {

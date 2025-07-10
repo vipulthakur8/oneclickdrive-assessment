@@ -1,5 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
@@ -23,5 +21,11 @@ model Vehicles {
   model String
   pricePerKm Int
   status String   // This feild will take only three values: approved, rejected, pending
+}
+
+model AuditTrail {
+  id Int @id @unique @default(autoincrement())
+  operation String
+  createdAt DateTime @default(now())
 }
 

@@ -1,13 +1,12 @@
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 
 export default function LoginForm() {
     const { status } = useSession();
     const router = useRouter()
 
-    const usernameRef = useRef(null);
-    const passwordRef = useRef(null);
+    const [creds, setCreds] = useState<{username: string, password: string}>({username: '', password: ''})
 
     const [pending, setPending] = useState<boolean>(false)
     const [err, setErr] = useState<string>('');
@@ -18,20 +17,27 @@ export default function LoginForm() {
         }
     }, [status, router])
 
+    const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+        const {name, value} = e.target;
+        setCreds(prev => {
+            return {
+                ...prev,
+                [name]: value
+            }
+        })
+    }
+
     const submitHandler = async () => {
         if (err) {
             setErr('')
         }
        
-        const username = usernameRef?.current?.value;
-        const password = passwordRef?.current?.value;
-
         try {
              setPending(prev => !prev)
             const result = await signIn('credentials', {
                 redirect: false,
-                username,
-                password
+                username: creds.username,
+                password: creds.password
             })
             setPending(prev => !prev)
 
@@ -61,16 +67,21 @@ export default function LoginForm() {
                 <span>
                     Username
                 </span>
-                <input id="username" ref={usernameRef} name="username" 
+                <input id="username" value={creds.username} name="username" 
                 type="text" placeholder="Enter username" 
-                className="input w-full" />
+                className="input w-full" 
+                onChange={changeHandler}
+                />
             </label>
 
             <label htmlFor="password" className="flex flex-col gap-1 mb-2">
                 <span>
                     Password
                 </span>
-                <input id="password" ref={passwordRef} name="password" type="password" placeholder="Enter password" className="input w-full" />
+                <input id="password" value={creds.password} name="password" 
+                type="password" placeholder="Enter password" className="input w-full" 
+                onChange={changeHandler}
+                />
             </label>
 
             {
