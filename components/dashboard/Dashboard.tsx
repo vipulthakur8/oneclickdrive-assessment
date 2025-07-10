@@ -49,12 +49,16 @@ const dummyListing = [
     }
 ]
 
-export default function Dashboard() {
+export default function Dashboard({vehicleData, totalVehicles}: {totalVehicles: number, vehicleData: Array<Record<string, string | number>>}) {
     const { status } = useSession();
     const { replace } = useRouter();
 
-    const [data, setData] = useState(dummyListing)
+    const [data, setData] = useState(vehicleData)
     const [filter, setFilter] = useState<string>('')
+
+    console.log("totalVehicles", totalVehicles);
+
+    // limit = 5;
 
     const [editItem, setEditItem] = useState<Record<string, string | number> | null>(null)
 
@@ -95,7 +99,7 @@ export default function Dashboard() {
                 </section>
                 <hr className="my-2"/>
 
-                <table className="border w-[95%] mx-auto">
+                <table className="border w-[95%] mx-auto mb-5">
                     <thead>
                         <tr>
                             <th className="border p-2">No.</th>
@@ -122,7 +126,7 @@ export default function Dashboard() {
                                             {item.owner}
                                         </td>
                                         <td className="text-center border p-2">
-                                            {item.pricingPerKm}
+                                            {item.pricePerKm}
                                         </td>
                                         <td className="text-center border p-2 capitalize">
                                             {item.status}
@@ -154,7 +158,7 @@ export default function Dashboard() {
                                             {item.owner}
                                         </td>
                                         <td className="text-center border p-2">
-                                            {item.pricingPerKm}
+                                            {item.pricePerKm}
                                         </td>
                                         <td className="text-center border p-2 capitalize">
                                             {item.status}
@@ -181,3 +185,4 @@ export default function Dashboard() {
 
     )
 }
+

@@ -1,5 +1,5 @@
 /*
-    This script adds an admin to the database
+    This script adds an admin and dummy verhicle data to the database
 */
 
 import { PrismaClient } from "@/generated/prisma";
@@ -27,67 +27,73 @@ async function addVehicles() {
         data: [
             {
                 model: 'Honda civic',
-                owner: 'Mario',
+                owner: 'Ash',
                 pricePerKm: 21,
                 status: 'pending'
             },
             
             {
                 model: 'Honda city',
-                owner: 'Luigi',
+                owner: 'Dawn',
                 pricePerKm: 21,
                 status: 'pending'
             },
             {
                 model: 'Hyundai Verna',
-                owner: 'Donkey Kong',
+                owner: 'Micky Mouse',
                 pricePerKm: 21,
                 status: 'pending'
             },
             {
                 model: 'Phantom',
-                owner: 'Elon Musk',
+                owner: 'Donald Duck',
                 pricePerKm: 21,
-                status: 'rejected'
+                status: 'pending'
             },
             {
                 model: 'Mustang',
-                owner: 'Dominic Torreto',
+                owner: 'Red',
                 pricePerKm: 21,
                 status: 'pending'
             },
             {
                 model: 'Aston Martin',
-                owner: 'James Bond',
+                owner: 'Misty',
                 pricePerKm: 21,
-                status: 'approved'
+                status: 'pending'
             },
              {
                 model: 'Bentley',
-                owner: 'Han Solo',
+                owner: 'Hilbert',
                 pricePerKm: 21,
-                status: 'approved'
+                status: 'pending'
             },
              {
                 model: 'Ferrari',
-                owner: 'Luke Skywalker',
+                owner: 'Serena',
                 pricePerKm: 21,
-                status: 'approved'
+                status: 'pending'
             },
              {
                 model: 'Ghost',
-                owner: 'Darth Vader',
+                owner: 'Iris',
                 pricePerKm: 21,
-                status: 'approved'
+                status: 'pending'
             },
              {
                 model: 'Range Rover',
-                owner: 'Amrendra Bahubali',
+                owner: 'Professor',
                 pricePerKm: 21,
-                status: 'approved'
+                status: 'pending'
             }
         ]
     })
+
+    // await prisma.vehicles.delete({
+    //     where: {
+    //         id: 30
+    //     }
+    // })
 }
 
 
