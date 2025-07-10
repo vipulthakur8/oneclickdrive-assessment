@@ -3,70 +3,27 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import EditVehicleForm from "./EditVehicleForm";
 
-const dummyListing = [
-    {
-        id: 1,
-        model: 'Honda civic',
-        owner: 'Mario',
-        pricingPerKm: 21,
-        status: 'pending'
-    },
-    
-    {
-        id: 2,
-        model: 'Honda civic',
-        owner: 'Mario',
-        pricingPerKm: 21,
-        status: 'pending'
-    },
-    {
-        id: 3,
-        model: 'Honda civic',
-        owner: 'Mario',
-        pricingPerKm: 21,
-        status: 'pending'
-    },
-    {
-        id: 4,
-        model: 'Honda civic',
-        owner: 'Mario',
-        pricingPerKm: 21,
-        status: 'rejected'
-    },
-    {
-        id: 5,
-        model: 'Honda civic',
-        owner: 'Mario',
-        pricingPerKm: 21,
-        status: 'pending'
-    },
-    {
-        id: 6,
-        model: 'Honda civic',
-        owner: 'Mario',
-        pricingPerKm: 21,
-        status: 'approved'
-    }
-]
-
-export default function Dashboard({vehicleData, totalVehicles}: {totalVehicles: number, vehicleData: Array<Record<string, string | number>>}) {
+export default function Dashboard(
+    {vehicleData, totalVehicles, currentPage, totalPages}:
+    {totalVehicles: number, vehicleData: Array<Record<string, string | number>>, currentPage: number, totalPages: number}
+) {
     const { status } = useSession();
-    const { replace } = useRouter();
+    const router = useRouter();
 
-    const [data, setData] = useState(vehicleData)
+    console.log("currentPage, totalPages", currentPage, totalPages);
+
+    // const [data, setData] = useState(vehicleData)
     const [filter, setFilter] = useState<string>('')
 
     console.log("totalVehicles", totalVehicles);
-
-    // limit = 5;
 
     const [editItem, setEditItem] = useState<Record<string, string | number> | null>(null)
 
     useEffect(() => {
         if (status === 'unauthenticated') {
-            replace('/');
+            router.replace('/');
         }
-    }, [status, replace])
+    }, [status, router])
 
     console.log("editItem", editItem);
 
@@ -113,7 +70,7 @@ export default function Dashboard({vehicleData, totalVehicles}: {totalVehicles: 
                     <tbody>
                         {
                             filter ?
-                            data.filter(item => item.status === filter).map((item, index) => {
+                            vehicleData.filter(item => item.status === filter).map((item, index) => {
                                 return (
                                     <tr key={item.id}>
                                         <td className="text-center border p-2">
@@ -145,7 +102,7 @@ export default function Dashboard({vehicleData, totalVehicles}: {totalVehicles: 
                                 )
                             })
                             :
-                            data.map((item, index) => {
+                            vehicleData.map((item, index) => {
                                 return (
                                     <tr key={item.id}>
                                         <td className="text-center border p-2">
@@ -179,6 +136,26 @@ export default function Dashboard({vehicleData, totalVehicles}: {totalVehicles: 
                         }
                     </tbody>
                 </table>
+
+                <section className="ml-10 mb-10">
+                    {
+                        Array.from({length: totalPages}, (_, i) => i+1).map((page) => {
+                            return (
+                                <button key={page} 
+                                onClick={() => {
+                                    router.push({
+                                        pathname: router.pathname,
+                                        query: {...router.query, page}
+                                    })
+                                }}
+                                className={`btn btn-md ${currentPage === page ? 'bg-blue-600 text-white' : ''}`}
+                                >
+                                    {page}
+                                </button>
+                            )
+                        })
+                    }
+                </section>
 
             </section>
         </>
