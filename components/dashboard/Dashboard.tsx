@@ -41,8 +41,6 @@ export default function Dashboard(
         }
     }, [status, router, notification])
 
-    // console.log("editElement", editElement);
-
     // Change handler in editVehicleForm
     const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -57,7 +55,6 @@ export default function Dashboard(
     // Edit vehicle details
     const editElementSubmitHandler = async(e: FormEvent) => {
         e.preventDefault();
-        console.log("InsideElementSubmitHandler")
         try {
             if (!notification.type) {
                 setNotification({type: null, message: ''})
@@ -83,7 +80,6 @@ export default function Dashboard(
             }
 
             const result = await response.json();
-            console.log("result in editElementSubmitHandler", result);
 
             // set the update the data on the client side
             const updatedData = data.map(item => {
@@ -143,7 +139,6 @@ export default function Dashboard(
             }
 
             const result = await response.json();
-            console.log("result in editElementSubmitHandler", result);
 
             // set the update the data on the client side
             const updatedData = data.map(item => {
@@ -337,7 +332,7 @@ export default function Dashboard(
                                         query: {...router.query, page}
                                     })
                                 }}
-                                className={`btn btn-md ${currentPage === page ? 'bg-blue-600 text-white' : ''}`}
+                                className={`btn btn-md ${currentPage === page ? 'bg-red-600 text-white' : ''}`}
                                 >
                                     {page}
                                 </button>

@@ -14,7 +14,6 @@ export default async function handler(
 ) {
 
     const session = await getServerSession(req, res, authOptions);
-    console.log("session in editVehicle", session)
     if (!session || !session.user) {
         return res.status(401).json({ message: "Unauthorized" });
     }
@@ -22,7 +21,6 @@ export default async function handler(
     if (req.method === 'POST') {
         try {
             const data = await req.body;
-            console.log("data in edit-vehicle route", data);
 
             // update database
             await prisma.vehicles.update({

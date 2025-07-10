@@ -5,7 +5,6 @@ import CredentialsProvider from "next-auth/providers/credentials"
 const prisma = new PrismaClient();
 
 export const authOptions: NextAuthOptions = {
-  // Configure one or more authentication providers
   session: {
     strategy: 'jwt'
   },
@@ -17,7 +16,6 @@ export const authOptions: NextAuthOptions = {
           password: { label: "Password", type: "password" }
         },
         authorize: async(credentials) => {
-            // console.log("credentials", credentials);
             if (!credentials) {
               throw new Error("Credentials is not provided");
             }
