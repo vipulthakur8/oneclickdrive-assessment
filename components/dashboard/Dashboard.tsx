@@ -1,6 +1,6 @@
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import EditVehicleForm from "./EditVehicleForm";
 
 export default function Dashboard(
@@ -10,35 +10,137 @@ export default function Dashboard(
     const { status } = useSession();
     const router = useRouter();
 
-    console.log("currentPage, totalPages", currentPage, totalPages);
-
-    // const [data, setData] = useState(vehicleData)
+    const [data, setData] = useState<Array<Record<string, string | number>>>([])
     const [filter, setFilter] = useState<string>('')
 
     console.log("totalVehicles", totalVehicles);
 
-    const [editItem, setEditItem] = useState<Record<string, string | number> | null>(null)
+    const [editItem, setEditItem] = useState<boolean>(false)
+    const [editElement, setEditElement] = useState<Record<string, string | number>>({})
+
+    // notification and progress indicator
+    const [notification, setNotification] = useState<{type: 'success' | 'error' | 'pending' | null, message: string}>({
+        type: null,
+        message: ''
+    })
+
+    useEffect(() => {
+        setData(vehicleData)
+    }, [vehicleData])
 
     useEffect(() => {
         if (status === 'unauthenticated') {
             router.replace('/');
         }
-    }, [status, router])
+        if (notification.type) {
+            const id = setTimeout(() => {
+                setNotification({type: null, message: ''})
+            }, 3000)
 
-    console.log("editItem", editItem);
+            return () => clearTimeout(id)
+        }
+    }, [status, router, notification])
+
+    // console.log("editElement", editElement);
+
+    // Change handler in editVehicleForm
+    const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setEditElement((prev) => {
+            return {
+                ...prev,
+                [name]: value
+            }
+        })
+    }
+
+    // Edit vehicle details
+    const editElementSubmitHandler = async(e: FormEvent) => {
+        e.preventDefault();
+        console.log("InsideElementSubmitHandler")
+        try {
+            if (!notification.type) {
+                setNotification({type: null, message: ''})
+            }
+            
+            setNotification({type: 'pending', message: ''})
+            const response = await fetch('/api/edit-vehicle', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    ...editElement
+                })
+            })         
+            setNotification({type: null, message: ''})
+
+            if (!response.ok) {
+                setNotification({
+                type: 'error',
+                message: 'Operation failed'
+            })
+            }
+
+            const result = await response.json();
+            console.log("result in editElementSubmitHandler", result);
+
+            // set the update the data on the client side
+            const updatedData = data.map(item => {
+                if (item.id !== editElement.id) {
+                    return item;
+                }
+                item.owner = editElement.owner;
+                item.model = editElement.model;
+                item.pricePerKm = editElement.pricePerKm;
+                item.status = editElement.status;
+                return item;
+            })
+            setData(updatedData);
+
+            // close the editElement
+            setEditItem(prev => !prev);
+
+            // set the notification: this must be closed after few seconds on the main dashboard
+            setNotification({
+                type: 'success',
+                message: result.message
+            })
+
+        } catch (error) {
+            let message = 'An error occurred';
+            if (typeof error === 'object' && error !== null) {
+                if ('message' in error && typeof error.message === 'string') {
+                    message = error.message
+                }
+            }
+            setNotification({
+                type: 'error',
+                message
+            })
+        }
+    }
 
     return (
         <>
             {
                 editItem && 
                 <div className="fixed w-[100%] h-[100%] bg-[rgba(0,0,0,0.6)] flex items-center justify-center">
-                    <EditVehicleForm item={editItem} 
-                    changeHandler={() => {
-                        console.log("edit change handler")
-                    }} 
-                    closeForm={() => setEditItem(null)}
+                    <EditVehicleForm item={editElement} 
+                    changeHandler={changeHandler} 
+                    closeForm={() => setEditItem(false)}
+                    editElementSubmitHandler={editElementSubmitHandler}
+                    notification={notification}
                     />
                 </div>
+            }
+            {
+                (notification.type === 'error' || notification.type === 'success') &&
+                <section 
+                className={`fixed w-fit bottom-4 right-4 rounded-md p-5 text-white ${notification.type === 'success' ? 'bg-green-700' : 'bg-red-900'}`}
+                >
+                    <h1 className="text-center">{notification.message}...</h1>
+                </section>
             }
             <section className="pt-5 ml-[200px]">
                 <section className="flex items-center justify-between">
@@ -70,7 +172,7 @@ export default function Dashboard(
                     <tbody>
                         {
                             filter ?
-                            vehicleData.filter(item => item.status === filter).map((item, index) => {
+                            data.filter(item => item.status === filter).map((item, index) => {
                                 return (
                                     <tr key={item.id}>
                                         <td className="text-center border p-2">
@@ -95,14 +197,22 @@ export default function Dashboard(
                                             disabled={item.status === 'approved' || item.status === 'rejected'}>Reject</button>
                                             <button className="btn btn-xs bg-black text-white" 
                                             disabled={item.status === 'rejected'}
-                                            onClick={() => setEditItem(item)}
+                                            onClick={() => {
+                                                setEditItem(prev => !prev)
+                                                setEditElement((prev) => {
+                                                    return {
+                                                        ...prev,
+                                                        ...item
+                                                    }
+                                                })
+                                            }}
                                             >Edit</button>
                                         </td>
                                     </tr>
                                 )
                             })
                             :
-                            vehicleData.map((item, index) => {
+                            data.map((item, index) => {
                                 return (
                                     <tr key={item.id}>
                                         <td className="text-center border p-2">
@@ -127,7 +237,15 @@ export default function Dashboard(
                                             disabled={item.status === 'approved' || item.status === 'rejected'}>Reject</button>
                                             <button className="btn btn-xs bg-black text-white" 
                                             disabled={item.status === 'rejected'}
-                                            onClick={() => setEditItem(item)}
+                                            onClick={() => {
+                                                setEditItem(prev => !prev)
+                                                setEditElement((prev) => {
+                                                    return {
+                                                        ...prev,
+                                                        ...item
+                                                    }
+                                                })
+                                            }}
                                             >Edit</button>
                                         </td>
                                     </tr>
