@@ -5,7 +5,7 @@ export default function EditVehicleForm(
     {item: Record<string, string | number>, changeHandler: () => void, closeForm: () => void}
 ) {
     return (
-        <section className="bg-white w-[90%] md:w-1/3 px-2 py-5">
+        <section className="bg-white w-[90%] md:w-1/3 px-2 py-5 rounded-lg">
             <h1 className="text-center text-2xl font-semibold">Edit Vehicle Information</h1>
             <form>
                 <label className="flex flex-col gap-1 pb-2">
@@ -18,7 +18,7 @@ export default function EditVehicleForm(
                 </label>
                 <label className="flex flex-col gap-1 pb-2">
                     <span>Price per kilometer (Rupee)</span>
-                    <input type="text" value={item.pricingPerKm} className="input w-full"/>
+                    <input type="text" value={item.pricePerKm} className="input w-full"/>
                 </label>
                 <label className="flex flex-col gap-1 pb-2">
                     <span>Status</span>
