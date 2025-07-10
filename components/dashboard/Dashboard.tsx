@@ -121,6 +121,61 @@ export default function Dashboard(
         }
     }
 
+
+    const vehicleStatusUpdateHandler = async(id: number, status: string) => {
+         try {
+            const response = await fetch('/api/vehicle-status-update', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    id,
+                    status
+                })
+            })         
+
+            if (!response.ok) {
+                setNotification({
+                type: 'error',
+                message: 'Operation failed'
+            })
+            }
+
+            const result = await response.json();
+            console.log("result in editElementSubmitHandler", result);
+
+            // set the update the data on the client side
+            const updatedData = data.map(item => {
+                if (item.id !== id) {
+                    return item;
+                }
+                item.status = status;
+                return item;
+            })
+            setData(updatedData);
+
+            // set the notification: this must be closed after few seconds on the main dashboard
+            setNotification({
+                type: 'success',
+                message: result.message
+            })
+
+        } catch (error) {
+            let message = 'An error occurred';
+            if (typeof error === 'object' && error !== null) {
+                if ('message' in error && typeof error.message === 'string') {
+                    message = error.message
+                }
+            }
+            setNotification({
+                type: 'error',
+                message
+            })
+        }
+    }
+
+
     return (
         <>
             {
@@ -192,9 +247,15 @@ export default function Dashboard(
                                         </td>
                                         <td className="border p-2 flex gap-3">
                                             <button className="btn btn-xs bg-green-500 text-white" 
-                                            disabled={item.status === 'approved' || item.status === 'rejected'}>Approve</button>
+                                            disabled={item.status === 'approved' || item.status === 'rejected'}
+                                            onClick={() => vehicleStatusUpdateHandler(Number(item.id), 'approved')}
+                                            >Approve</button>
+
                                             <button className="btn btn-xs bg-red-800 text-white" 
-                                            disabled={item.status === 'approved' || item.status === 'rejected'}>Reject</button>
+                                            disabled={item.status === 'approved' || item.status === 'rejected'}
+                                            onClick={() => vehicleStatusUpdateHandler(Number(item.id), 'rejected')}
+                                            >Reject</button>
+
                                             <button className="btn btn-xs bg-black text-white" 
                                             disabled={item.status === 'rejected'}
                                             onClick={() => {
@@ -232,9 +293,19 @@ export default function Dashboard(
                                         </td>
                                         <td className="border p-2 flex gap-3">
                                             <button className="btn btn-xs bg-green-500 text-white" 
-                                            disabled={item.status === 'approved' || item.status === 'rejected'}>Approve</button>
+                                            disabled={item.status === 'approved' || item.status === 'rejected'}
+                                            onClick={() => vehicleStatusUpdateHandler(Number(item.id), 'approved')}
+                                            >
+                                                Approve
+                                            </button>
+
                                             <button className="btn btn-xs bg-red-800 text-white" 
-                                            disabled={item.status === 'approved' || item.status === 'rejected'}>Reject</button>
+                                            disabled={item.status === 'approved' || item.status === 'rejected'}
+                                            onClick={() => vehicleStatusUpdateHandler(Number(item.id), 'rejected')}
+                                            >
+                                                Reject
+                                            </button>
+
                                             <button className="btn btn-xs bg-black text-white" 
                                             disabled={item.status === 'rejected'}
                                             onClick={() => {

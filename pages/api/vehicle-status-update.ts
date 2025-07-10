@@ -29,7 +29,7 @@ export default async function handler(
 
             // update audit log
 
-            res.status(200).json({ message: "Vehicle approved" });
+            res.status(200).json({ message: `Vehicle ${data.status}`});
         } catch (error) {
             let message = 'An error occurred';
             if (typeof error === 'object' && error !== null) {
