@@ -6,7 +6,6 @@ export default function LoginForm() {
     const { status } = useSession();
     const router = useRouter()
 
-    console.log("session", status);
     const usernameRef = useRef(null);
     const passwordRef = useRef(null);
 
@@ -14,7 +13,7 @@ export default function LoginForm() {
     const [err, setErr] = useState<string>('');
 
     useEffect(() => {
-        if (status === 'authenticated' || status === 'loading') {
+        if (status === 'authenticated') {
             router.replace('/dashboard')
         }
     }, [status, router])
@@ -57,7 +56,7 @@ export default function LoginForm() {
 
     return (
         <div className="w-[90%] md:w-1/2 lg:w-1/4 lg mx-auto bg-white p-2 rounded-lg">
-            <h1 className="text-center text-xl md:text-2xl m-3 font-bold">OneClickDrive</h1>
+            <h1 className="text-center text-xl md:text-2xl m-3 font-bold">Log in</h1>
             <label htmlFor="username" className="flex flex-col gap-1 mb-2 w-full">
                 <span>
                     Username

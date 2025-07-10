@@ -1,13 +1,12 @@
-import Dashboard from "@/components/dashboard/Dashboard"
+import Log from "@/components/dashboard/Log"
 import SideMenu from "@/components/dashboard/SideMenu"
 import { SessionProvider } from "next-auth/react"
 
-export default function DashboardPage() {
-
+export default function LogPage() {
     return (
         <SessionProvider>
-          <SideMenu />
-          <Dashboard />
+            <SideMenu />
+            <Log />
         </SessionProvider>
     )
 }
