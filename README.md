@@ -9,3 +9,13 @@
 #### 5. Now run the following command: npx auth secret. This will generate the auth key which is required for next-auth to work. It will be stored in .env.local file.
 #### 6. Now add the following in your .env file: DATABASE_URL="file:./data/dev.db". This is the path to the databse which is SQLlite in this project.
 #### 7. Now run the following command to run local development: npm run dev
+
+## Login Credentials
+I have added a dummy user which can be used to login. 
+username: admin100
+password: dev-assessment
+
+One can also add another user through db-user-setup.ts script in the scripts folder.
+Functions are provided to add user as well vehicle data. Please check that out and modifiy the data
+that suits your purpose.
+You can run the script with the following command: npx tsx scripts/db-user-setup.ts
